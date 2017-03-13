@@ -236,4 +236,17 @@ lister_objets(Endroit) :-
 
 lister_objets(_).
 
+
+/* Règle qui définit la mort */
+
+mourir :-
+        !, terminer.
+
+/* Règle pour afficher un message final */
+
+terminer :-
+        nl,
+        write('La partie est terminée. Tapez la commande "halt."'),
+        nl, !.
+
 % Fin
