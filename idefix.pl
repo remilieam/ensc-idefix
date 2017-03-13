@@ -2,8 +2,8 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, je_possede/1.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)).
+:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)), retractall(est_signe(_)).
 
 % Point de départ du joueur
 
@@ -258,10 +258,12 @@ ramasser(cle) :-
         retract(il_y_a(X, Endroit)),
         assert(il_y_a(X, en_main)),
 		je_possede(N),
+		N =< 4,
 		M is N+1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
         write('OK.'), nl,
+		write('Attention, vous ne pouvez pas avoir plus de 5 objets sur vous !'),
 		write('Si vous déposez la clé, vous ne pourrez plus la récupérer par la suite !'),
         nl, !.
 
@@ -271,10 +273,19 @@ ramasser(X) :-
         retract(il_y_a(X, Endroit)),
         assert(il_y_a(X, en_main)),
 		je_possede(N),
+		N =< 4,
 		M is N+1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
         write('OK.'),
+		write('Attention, vous ne pouvez pas avoir plus de 5 objets sur vous !'),
+        nl, !.
+
+ramasser(_) :-
+		je_possede(N),
+		N > 4,
+		write('Vous avez déjà 5 objets sur vous...'), nl,
+		write('Déposez un objet de votre inventaire.'),
         nl, !.
 
 ramasser(_) :-
