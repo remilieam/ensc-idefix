@@ -63,4 +63,22 @@ chemin(balcon, o, salle7).
 chemin(balcon, e, salle8).
 chemin(balcon, n, croisementEtage).
 
+/* Définition des objets et des NPC */
+
+il_y_a(cle, salle1).
+il_y_a(torche, salle1).
+
+il_y_a(formulaireYYY, salle2).
+il_y_a(gourde, salle2).
+
+il_y_a(secretaire, salle3).
+
+il_y_a(directeur, salle5).
+
+il_y_a(formulaireZZZ, salle6).
+
+il_y_a(gardien, salle7).
+
+il_y_a(formulaireXXX, salle8).
+
 % Fin
