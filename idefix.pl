@@ -1,3 +1,13 @@
+/* Prérequis */
+
+% Prédicats dynamiques
+
+:- dynamic je_suis_a/1, il_y_a/2.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)).
+
+% Point de départ du joueur
+
+je_suis_a(entree).
 
 /* Définition de l'environnement */
 
