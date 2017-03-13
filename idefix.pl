@@ -72,13 +72,13 @@ il_y_a(torche, salle1).
 il_y_a(formulaireYYY, salle2).
 il_y_a(gourde, salle2).
 
-il_y_a(secretaire, salle3).
+est_present(secretaire, salle3).
 
-il_y_a(directeur, salle5).
+est_present(directeur, salle5).
 
 il_y_a(formulaireZZZ, salle6).
 
-il_y_a(gardien, salle7).
+est_present(gardien, salle7).
 
 il_y_a(formulaireXXX, salle8).
 
@@ -110,6 +110,8 @@ regarder :-
         decrire(Endroit),
         nl,
         lister_objets(Endroit),
+        nl,
+        lister_NPC(Endroit),
         nl.
 
 /* Règles pour afficher la ou les description(s) de l'environnement */
@@ -228,7 +230,7 @@ decrire(escalierEtage):-
         write('Vous pouvez descendre au rez-de-chaussée ou'), nl.
 		write('aller à l''étage au sud.'), nl.
 
-/* Règles pour indiquer tous les objets autour du joueur */
+/* Règles pour indiquer tous les objets et tous les NPC autour du joueur */
 
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
@@ -236,6 +238,13 @@ lister_objets(Endroit) :-
         fail.
 
 lister_objets(_).
+
+lister_NPC(Endroit) :-
+        est_present(X, Endroit),
+        write('Vous pouvez parler au / à la '), write(X), write(' ici.'), nl,
+        fail.
+
+lister_NPC(_).
 
 % Règles pour ramasser un objet
 
