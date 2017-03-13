@@ -2,12 +2,13 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)).
+:- dynamic je_suis_a/1, il_y_a/2, je_possede/1.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)).
 
 % Point de départ du joueur
 
 je_suis_a(entree).
+je_possede(0).
 
 /* Définition de l'environnement */
 
@@ -236,6 +237,68 @@ lister_objets(Endroit) :-
 
 lister_objets(_).
 
+% Règles pour ramasser un objet
+
+ramasser(X) :-
+        il_y_a(X, en_main),
+        write('Vous le tenez déjà !'),
+        nl, !.
+
+ramasser(cle) :-
+		il_y_a(X, Endroit),
+        retract(il_y_a(X, Endroit)),
+        assert(il_y_a(X, en_main)),
+		je_possede(N),
+		M is N+1,
+		retract(je_possede(N)),
+		assert(je_possede(M)),
+        write('OK.'), nl,
+		write('Si vous déposez la clé, vous ne pourrez plus la récupérer par la suite !'),
+        nl, !.
+
+ramasser(X) :-
+        je_suis_a(Endroit),
+        il_y_a(X, Endroit),
+        retract(il_y_a(X, Endroit)),
+        assert(il_y_a(X, en_main)),
+		je_possede(N),
+		M is N+1,
+		retract(je_possede(N)),
+		assert(je_possede(M)),
+        write('OK.'),
+        nl, !.
+
+ramasser(_) :-
+        write('Je ne vois rien ici.'),
+        nl.
+
+% Règles pour déposer un objet
+
+deposer(cle) :-
+        il_y_a(cle, en_main),
+        retract(il_y_a(X, en_main)),
+		je_possede(N),
+		M is N-1,
+		retract(je_possede(N)),
+		assert(je_possede(M)),
+        write('Vous ne pourrez plus récupérer la clé...'),
+        !, nl.
+
+deposer(X) :-
+        il_y_a(X, en_main),
+        je_suis_a(Endroit),
+        retract(il_y_a(X, en_main)),
+        assert(il_y_a(X, Endroit)),
+		je_possede(N),
+		M is N-1,
+		retract(je_possede(N)),
+		assert(je_possede(M)),
+        write('OK.'),
+        !, nl.
+
+deposer(_) :-
+        write('Vous ne le tenez pas !'),
+        nl.
 
 /* Règle qui définit la mort */
 
