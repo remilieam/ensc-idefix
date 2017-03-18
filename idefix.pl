@@ -218,7 +218,24 @@ decrire(salle6) :-
         write('Vous pouvez partir par la porte qui se trouve au sud.'), nl.
 
 decrire(salle7) :-
+		il_y_a(torche, en_main),
         write('Vous vous trouvez dans la loge du gardien.'), nl,
+		write('Et si je lui offrait la torche que j''ai en main.'), nl,
+		write('à lui offrir... Peut-être une torche... ?'), nl, !.
+
+decrire(salle7) :-
+        write('Vous vous trouvez dans la loge du gardien.'), nl,
+		write('Il semblerait qu''il ne soit pas commode,'), nl,
+		write('mieux voudrait, revenir lorsque j''aurai quelque chose'), nl,
+		write('à lui offrir... Peut-être une torche... ?'), nl, !.
+
+lister_NPC(salle3) :-
+        write('Vous pouvez parler à la secrétaire.'), nl, nl,
+		write('Elle a l''air sympathique, allons-y !'), nl, !.
+
+lister_NPC(salle5) :- 
+		write('Vous pouvez parler au directeur.'), nl.
+
         write('À l''est vous pouvez revenir sur le balcon.'), nl.
 		
 decrire(salle8) :-
