@@ -90,7 +90,7 @@ s :- aller(s).
 e :- aller(e).
 o :- aller(o).
 
-% Montée, Descendre
+% Monter, Descendre
 
 d :- aller(d).
 m :- aller(m).
@@ -271,12 +271,16 @@ decrire(escalierEtage) :-
 
 /* Règles pour indiquer tous les objets et tous les NPC autour du joueur */
 
+% Objets
+
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
         nl, write('Il y a un(e) '), write(X), write(' ici.'),
         nl, fail.
 
 lister_objets(_).
+
+% NPC
 
 lister_NPC(Endroit) :-
         est_present(X, Endroit),
