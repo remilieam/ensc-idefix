@@ -481,6 +481,7 @@ mode_emploi :-
         nl, write('deposer(Objet).   -- pour laisser tomber un objet'),
         nl, write('parler.           -- pour parler à un NPC'),
         nl, write('regarder.         -- pour regarder de nouveau autour de vous'),
+        nl, write('inventaire.       -- pour afficher ce que vous portez'),
         nl, write('mode_emploi.      -- pour afficher le mode d''emploi de nouveau'),
         nl, write('consigne.         -- pour afficher l''objectif du jeu de nouveau'),
         nl, write('terminer.         -- pour terminer la partie'),
