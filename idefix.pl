@@ -88,6 +88,8 @@ afficher([T|Q]) :- write('  - '), write(T), nl, afficher(Q).
 
 inventaire :- findall(X, il_y_a(X, en_main), L),
         nl, write('Voici ce que je porte :'),
+        nl, afficher(L),
+        nl.
 
 /* Définition des directions */
 
