@@ -47,12 +47,10 @@ chemin(croisementEtage, o, couloirGaucheEtage).
 chemin(croisementEtage, n, escalierEtage).
 chemin(croisementEtage, s, balcon).
 
-chemin(couloirDroitEtage, n, salle6).
-chemin(couloirDroitEtage, s, salle8).
+chemin(couloirDroitEtage, n, salle6) :- il_y_a(carte_visiteur, en_main).
 chemin(couloirDroitEtage, o, croisementEtage).
 
 chemin(couloirGaucheEtage, n, salle5).
-chemin(couloirGaucheEtage, s, salle7).
 chemin(couloirGaucheEtage, e, croisementEtage).
 
 chemin(salle5, s, couloirGaucheEtage).
@@ -61,7 +59,7 @@ chemin(salle7, e, balcon).
 chemin(salle8, o, balcon).
 
 chemin(balcon, o, salle7).
-chemin(balcon, e, salle8).
+chemin(balcon, e, salle8) :- il_y_a(passe_directeur, en_main).
 chemin(balcon, n, croisementEtage).
 
 /* Définition des objets et des NPC */
@@ -187,13 +185,19 @@ decrire(croisementEtage) :-
         write('À l''est se trouve le couloir de droite'), nl,
         write('À l''ouest se trouve le couloir de gauche.'), nl,
 		write('Au sud, se trouve le balcon.'), nl.
+
+decrire(couloirDroitEtage) :-
+		il_y_a(carte_visiteur, en_main),
+        write('Vous êtes au niveau du couloir droit du premier étage.'), nl,
+        write('Au nord se trouve la bibliothèque.'), nl,
+        write('À l''ouest se trouve le croisement des couloirs du premier étage.'), nl, !.
 		
 decrire(couloirDroitEtage) :-
         write('Vous êtes au niveau du couloir droit du premier étage.'), nl,
-        write('Au nord se trouve la bibliothèque.'), nl,
-        write('Au sud se trouve la salle des archives.'), nl,
+        write('Au nord se trouve la bibliothèque'), nl,
+		write('mais elle n''est pour l''instant pas accessible :.'), nl,
+		write('il vous faut la carte du visiteur.'), nl,
         write('À l''ouest se trouve le croisement des couloirs du premier étage.'), nl.
-		
 		
 decrire(couloirGaucheEtage) :-
         write('Vous vous trouvez au niveau du couloir gauche du premier étage.'), nl,
@@ -202,12 +206,20 @@ decrire(couloirGaucheEtage) :-
         write('À l''est se trouve le croisement des couloirs du premier étage.'), nl.
 		
 decrire(balcon) :-
+		il_y_a(passe_directeur, en_main),
         write('Vous êtes sur le balcon.'), nl,
         write('Au nord se trouve le croisement des couloirs du premier étage.'), nl,
         write('À l''est, se trouve la salle des archives.'), nl,
+		write('À l''ouest, se trouve la loge du gardien.'), nl, !.
+			
+decrire(balcon) :-
+        write('Vous êtes sur le balcon.'), nl,
+        write('Au nord se trouve le croisement des couloirs du premier étage.'), nl,
+        write('À l''est, se trouve la salle des archives'), nl,
+		write('dans laquelle vous ne pouvez pas eller :'), nl,
+		write('il vous faut le passe du directeur'), nl,
 		write('À l''ouest, se trouve la loge du gardien.'), nl.
 		
-
 decrire(salle5) :-
         write('Vous vous trouvez dans le bureau du directeur.'), nl,
         write('Vous pouvez le quitter par la porte qui est au sud.'), nl.
@@ -235,7 +247,6 @@ lister_NPC(salle3) :-
 
 lister_NPC(salle5) :- 
 		write('Vous pouvez parler au directeur.'), nl.
-
         write('À l''est vous pouvez revenir sur le balcon.'), nl.
 		
 decrire(salle8) :-
@@ -395,10 +406,19 @@ parler :-
 
 parler :-
 		je_suis_a(salle5),
+		est_remis(passe_directeur),
+		write('Qu''est-ce que vous me voulez encore ! C''est du harcelement !'), nl,
+		write('Gardien, amenez-le à la cage aux lions !'), nl,
+		mourir, !.
+
+parler :-
+		je_suis_a(salle5),
 		il_y_a(formulaireZZZ, en_main),
 		est_signe(formulaireZZZ),
+		assert(est_remis(passe_directeur),
 		write('Je vois que vous avez le formulaire ZZZ signé.'), nl,
-		write('Je vous remets donc mon passe qui vous donnera accès à la salle des archives'), nl, !.
+		write('Je vous remets donc mon passe qui vous donnera accès à la salle des archives'), nl,
+		ramasser(passe_directeur), !.
 
 parler :-
 		je_suis_a(salle5),
