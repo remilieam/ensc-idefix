@@ -1,9 +1,9 @@
-/* Prérequis */
+﻿/* Prérequis */
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)), retractall(est_signe(_)).
+:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)).
 
 % Point de départ du joueur
 
@@ -208,24 +208,24 @@ decrire(balcon) :-
 		write('À l''ouest, se trouve la loge du gardien.'), nl.
 		
 
-decrire(salle5):-
+decrire(salle5) :-
         write('Vous vous trouvez dans le bureau du directeur.'), nl,
         write('Vous pouvez le quitter par la porte qui est au sud.'), nl.
       
 
-decrire(salle6):-
+decrire(salle6) :-
         write('Vous êtes dans la bibliothèque.'), nl,
         write('Vous pouvez partir par la porte qui se trouve au sud.'), nl.
 
-decrire(salle7):-
+decrire(salle7) :-
         write('Vous vous trouvez dans la loge du gardien.'), nl,
         write('À l''est vous pouvez revenir sur le balcon.'), nl.
 		
-decrire(salle8):-
+decrire(salle8) :-
         write('Vous vous trouvez dans la salle des archives'), nl,
         write('À l''ouest vous pouvez revenir sur le balcon.'), nl.
 		
-decrire(escalierEtage):-		
+decrire(escalierEtage) :-		
         write('Vous vous trouvez au niveau de l''escalier du premier étage.'), nl,
         write('Vous pouvez descendre au rez-de-chaussée ou'), nl.
 		write('aller à l''étage au sud.'), nl.
@@ -246,11 +246,11 @@ lister_NPC(Endroit) :-
 
 lister_NPC(_).
 
-% Règles pour ramasser un objet
+/* Règles pour ramasser un objet */
 
 ramasser(X) :-
         il_y_a(X, en_main),
-        write('Vous le tenez déjà !'),
+        write('Ah mais c''est que j''ai déjà ça sur moi !'),
         nl, !.
 
 ramasser(cle) :-
@@ -262,9 +262,9 @@ ramasser(cle) :-
 		M is N+1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
-        write('OK.'), nl,
-		write('Attention, vous ne pouvez pas avoir plus de 5 objets sur vous !'),
-		write('Si vous déposez la clé, vous ne pourrez plus la récupérer par la suite !'),
+        write('Désormais, je possède un(e) '), write(X), nl,
+		write('Il faut que je la conserve précieusement'), nl,
+		write('car si je la dépose, je ne suis pas sûr(e) de la retrouver...'),
         nl, !.
 
 ramasser(X) :-
@@ -277,22 +277,21 @@ ramasser(X) :-
 		M is N+1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
-        write('OK.'),
-		write('Attention, vous ne pouvez pas avoir plus de 5 objets sur vous !'),
+        write('Désormais, je possède un(e) '), write(X),
         nl, !.
 
 ramasser(_) :-
 		je_possede(N),
 		N > 4,
-		write('Vous avez déjà 5 objets sur vous...'), nl,
-		write('Déposez un objet de votre inventaire.'),
+		write('Mince ! J''ai déjà 5 objets dans mon inventaire...'), nl,
+		write('Il faut que je dépose quelque chose... Mais quoi ?'),
         nl, !.
 
 ramasser(_) :-
-        write('Je ne vois rien ici.'),
+        write('Je suis bête... Il n''y a rien ici.'),
         nl.
 
-% Règles pour déposer un objet
+/* Règles pour déposer un objet */
 
 deposer(cle) :-
         il_y_a(cle, en_main),
@@ -301,7 +300,8 @@ deposer(cle) :-
 		M is N-1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
-        write('Vous ne pourrez plus récupérer la clé...'),
+        write('Flute, où est-ce qu''elle est tombée ! Elle a disparue !'), nl,
+		write('Impossible de la récupérer maintenant...'), nl,
         !, nl.
 
 deposer(X) :-
@@ -313,17 +313,94 @@ deposer(X) :-
 		M is N-1,
 		retract(je_possede(N)),
 		assert(je_possede(M)),
-        write('OK.'),
+        write('Aaaah enfin, plus besoin de porter cet(tte) '), write(X),
         !, nl.
 
 deposer(_) :-
-        write('Vous ne le tenez pas !'),
+        write('Mais mais... je n''ai pas encore ça sur moi !'),
         nl.
+
+/* Règles pour parler à un NPC */
+
+% Avec la secretaire
+
+parler :-
+		je_suis_a(salle3),
+		il_y_a(formulaireZZZ, en_main),
+		est_signe(formulaireZZZ),
+		write('J''ai déjà signé le formulaire ZZZ... Vous pouvez dès à présent aller voir le directeur !'),
+		nl, !.
+  
+parler :-
+		je_suis_a(salle3),
+		il_y_a(formulaireZZZ, en_main),
+		assert(est_signe(formulaireZZZ)),
+		write('Voilà ! Le formulaire ZZZ est signé. Vous pouvez dès à présent aller voir le directeur !'),
+		nl, !.
+
+parler :-
+		je_suis_a(salle3),
+		est_remis(formulaireWWW),
+		est_remis(carte_visiteur),
+		write('Désolée, je ne peux rien faire pour vous...'), nl, !.
+
+parler :-
+		je_suis_a(salle3),
+		write('Bienvenue. Voici le formulaire WWW et la carte du visiteur. Cela pourrait vous être utile...'), nl,
+		assert(est_remis(formulaireWWW)),
+		assert(est_remis(carte_visiteur)),
+		ramasser(formulaireWWW, en_main),
+		ramasser(carte_visiteur, en_main).
+
+% Avec le gardien
+
+parler :-
+		je_suis_a(salle7),
+		il_y_a(formulaireYYY, en_main),
+		write('Bonjour ! Je vais rester avec vous pour pouvoir vous ouvrir la porte de la bibliothèque.'),
+		nl, !.
+
+parler :-
+		je_suis_a(salle7),
+		il_y_a(torche, en_main),
+		write('Bonjour ! C''est gentil de m''apporter une torche pour éclairer ma loge.'), nl,
+		write('Malheureusement je ne peux rien faire pour vous'), nl,
+		write('si vous n''avez pas le formulaire YYY...'),
+		nl, !.
+
+parler :-
+		je_suis_a(salle7),
+		write('Vous osez me déranger pour rien ! Comment osez-vous ?!!'), nl,
+		write('Allez, direction la cage aux lions, et fissa !'), nl,
+		mourir.
+
+% Avec le directeur
+
+parler :-
+		je_suis_a(salle5),
+		il_y_a(formulaireZZZ, en_main),
+		est_signe(formulaireZZZ),
+		write('Je vois que vous avez le formulaire ZZZ signé.'), nl,
+		write('Je vous remets donc mon passe qui vous donnera accès à la salle des archives'), nl, !.
+
+parler :-
+		je_suis_a(salle5),
+		il_y_a(formulaireZZZ, en_main),
+		write('Vous débarquez d''où ? Il faut la signature de la secrétaire'), nl,
+		write('sur le formulaire ZZZ. Le gardien va vous amener à la cage des lions...'), nl,
+		mourir.
+
+parler :-
+		je_suis_a(salle5),
+		write('Alors il va me falloir le formulaire ZZZ signé par la secrétaire.')
+		write('Parce que là, je ne peux rien faire... Au revoir !'), nl.
+		
 
 /* Règle qui définit la mort */
 
 mourir :-
-        !, terminer.
+        write('Argl ! Des lions affamés ! Au secours !'), nl,
+		write('Aaaargl, bluurp, squick ! Je suis mort !!!'), terminer.
 
 /* Règle pour afficher un message final */
 
