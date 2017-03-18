@@ -81,6 +81,14 @@ est_present(secretaire, salle3).
 est_present(directeur, salle5).
 est_present(gardien, salle7).
 
+/* Règles pour afficher l'inventaire */
+
+afficher([T]) :- write('  - '), write(T), nl, !.
+afficher([T|Q]) :- write('  - '), write(T), nl, afficher(Q).
+
+inventaire :- findall(X, il_y_a(X, en_main), L),
+        nl, write('Voici ce que je porte :'),
+
 /* Définition des directions */
 
 % Nord, Sud, Est, Ouest
