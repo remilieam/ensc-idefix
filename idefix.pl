@@ -2,7 +2,7 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1.
+:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1, avec/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)).
 
 % Point de départ du joueur
@@ -47,7 +47,8 @@ chemin(croisementEtage, o, couloirGaucheEtage).
 chemin(croisementEtage, n, escalierEtage).
 chemin(croisementEtage, s, balcon).
 
-chemin(couloirDroitEtage, n, salle6) :- il_y_a(carte_visiteur, en_main).
+chemin(couloirDroitEtage, n, salle6) :- il_y_a(carte_visiteur, en_main), avec(gardien).
+chemin(couloirDroitEtage, n, salle6) :- write('Impossible ! Il faut la carte du visiteur !'), fail.
 chemin(couloirDroitEtage, o, croisementEtage).
 
 chemin(couloirGaucheEtage, n, salle5).
@@ -60,6 +61,7 @@ chemin(salle8, o, balcon).
 
 chemin(balcon, o, salle7).
 chemin(balcon, e, salle8) :- il_y_a(passe_directeur, en_main).
+chemin(balcon, e, salle8) :- write('Impossible ! Il faut le passe du directeur !'), fail.
 chemin(balcon, n, croisementEtage).
 
 /* Définition des objets et des NPC */
@@ -163,7 +165,7 @@ decrire(salle3) :-
 
 decrire(salle3) :- 
 		il_y_a(formulaireZZZ, en_main),
-        write('Vous avez trouvé l''accueil !'), nl,
+        write('Vous êtes à l''accueil !'), nl,
 		write('Vous pouvez faire signer ici le formulaire ZZZ.'), nl,
         write('Pour partir par la porte qui se trouve au nord.'), nl.
 
@@ -187,17 +189,9 @@ decrire(croisementEtage) :-
 		write('Au sud, se trouve le balcon.'), nl.
 
 decrire(couloirDroitEtage) :-
-		il_y_a(carte_visiteur, en_main),
         write('Vous êtes au niveau du couloir droit du premier étage.'), nl,
-        write('Au nord se trouve la bibliothèque.'), nl,
+        write('Au nord se trouve la bibliothèque dont l''accès semble réservé au personnel.'), nl,
         write('À l''ouest se trouve le croisement des couloirs du premier étage.'), nl, !.
-		
-decrire(couloirDroitEtage) :-
-        write('Vous êtes au niveau du couloir droit du premier étage.'), nl,
-        write('Au nord se trouve la bibliothèque'), nl,
-		write('mais elle n''est pour l''instant pas accessible :.'), nl,
-		write('il vous faut la carte du visiteur.'), nl,
-        write('À l''ouest se trouve le croisement des couloirs du premier étage.'), nl.
 		
 decrire(couloirGaucheEtage) :-
         write('Vous vous trouvez au niveau du couloir gauche du premier étage.'), nl,
@@ -206,28 +200,25 @@ decrire(couloirGaucheEtage) :-
         write('À l''est se trouve le croisement des couloirs du premier étage.'), nl.
 		
 decrire(balcon) :-
-		il_y_a(passe_directeur, en_main),
         write('Vous êtes sur le balcon.'), nl,
         write('Au nord se trouve le croisement des couloirs du premier étage.'), nl,
         write('À l''est, se trouve la salle des archives.'), nl,
 		write('À l''ouest, se trouve la loge du gardien.'), nl, !.
-			
-decrire(balcon) :-
-        write('Vous êtes sur le balcon.'), nl,
-        write('Au nord se trouve le croisement des couloirs du premier étage.'), nl,
-        write('À l''est, se trouve la salle des archives'), nl,
-		write('dans laquelle vous ne pouvez pas eller :'), nl,
-		write('il vous faut le passe du directeur'), nl,
-		write('À l''ouest, se trouve la loge du gardien.'), nl.
-		
+	
 decrire(salle5) :-
         write('Vous vous trouvez dans le bureau du directeur.'), nl,
         write('Vous pouvez le quitter par la porte qui est au sud.'), nl.
-      
+    
+decrire(salle6) :-
+		avec(gardien),
+        write('Vous êtes dans la bibliothèque.'), nl,
+        write('Vous pouvez partir par la porte qui se trouve au sud.'), nl, !.
 
 decrire(salle6) :-
         write('Vous êtes dans la bibliothèque.'), nl,
-        write('Vous pouvez partir par la porte qui se trouve au sud.'), nl.
+		write('Une alarme se déclenche... et le gardien arrive.'), nl,
+        write('Il vous conduit directement à la cage aux lions'), nl,
+		mourir.
 
 decrire(salle7) :-
 		il_y_a(torche, en_main),
@@ -385,6 +376,7 @@ parler :-
 parler :-
 		je_suis_a(salle7),
 		il_y_a(formulaireYYY, en_main),
+		assert(avec(gardien)),
 		write('Bonjour ! Je vais rester avec vous pour pouvoir vous ouvrir la porte de la bibliothèque.'),
 		nl, !.
 
