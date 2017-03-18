@@ -69,18 +69,18 @@ chemin(balcon, n, croisementEtage).
 il_y_a(cle, salle1).
 il_y_a(torche, salle1).
 
-il_y_a(formulaireYYY, salle2).
+il_y_a(laissez-passer_W-51, salle2).
 il_y_a(gourde, salle2).
 
 est_present(secretaire, salle3).
 
 est_present(directeur, salle5).
 
-il_y_a(formulaireZZZ, salle6).
+il_y_a(laissez-passer_R-24, salle6).
 
 est_present(gardien, salle7).
 
-il_y_a(formulaireXXX, salle8).
+il_y_a(laissez-passer_A-38, salle8).
 
 /* Définition des directions */
 
@@ -120,12 +120,10 @@ regarder :-
 
 decrire(entree) :-
         write('Vous vous trouvez à l''entrée du bâtiment, au rez-de-chaussée.'), nl,
-        write('Au nord se trouve le croisement de 2 couloirs.'), nl,
-        write('Votre objectif est de récupérer le formulaire XXX'), nl,
-        write('et de revenir ici en vie.'), nl.
+        write('Au nord se trouve le croisement de 2 couloirs.'), nl.
 		
 decrire(entree) :-
-        il_y_a(formulaireXXX, en_main),
+        il_y_a(laissez-passer__A-38, en_main),
 		write('Bravo ! Vous avez gagné ! Vous allez afin pouvoir sortir de ce bâtiment de fous !'), nl.
 		terminer, !.
 
@@ -164,9 +162,9 @@ decrire(salle3) :-
         write('Pour partir par la porte qui se trouve au nord.'), nl.
 
 decrire(salle3) :- 
-		il_y_a(formulaireZZZ, en_main),
+		il_y_a(laissez-passer_R-24, en_main),
         write('Vous êtes à l''accueil !'), nl,
-		write('Vous pouvez faire signer ici le formulaire ZZZ.'), nl,
+		write('Vous pouvez faire signer ici le laissez-passer _R-24.'), nl,
         write('Pour partir par la porte qui se trouve au nord.'), nl.
 
 decrire(salle4) :- 
@@ -345,37 +343,38 @@ deposer(_) :-
 
 parler :-
 		je_suis_a(salle3),
-		il_y_a(formulaireZZZ, en_main),
-		est_signe(formulaireZZZ),
-		write('J''ai déjà signé le formulaire ZZZ... Vous pouvez dès à présent aller voir le directeur !'),
+		il_y_a(laissez-passer_R-24, en_main),
+		est_signe(laissez-passer_R-24),
+		write('J''ai déjà signé le laissez-passer R-24... Vous pouvez dès à présent aller voir le directeur !'),
 		nl, !.
   
 parler :-
 		je_suis_a(salle3),
-		il_y_a(formulaireZZZ, en_main),
-		assert(est_signe(formulaireZZZ)),
-		write('Voilà ! Le formulaire ZZZ est signé. Vous pouvez dès à présent aller voir le directeur !'),
+		il_y_a(laissez-passer_R-24, en_main),
+		assert(est_signe(laissez-passer_R-24)),
+		write('Voilà ! Le laissez-passer R-24 est signé. Vous pouvez dès à présent aller voir le directeur !'),
 		nl, !.
 
 parler :-
 		je_suis_a(salle3),
-		est_remis(formulaireWWW),
+		est_remis(laissez-passer_M-47),
 		est_remis(carte_visiteur),
 		write('Désolée, je ne peux rien faire pour vous...'), nl, !.
 
 parler :-
 		je_suis_a(salle3),
-		write('Bienvenue. Voici le formulaire WWW et la carte du visiteur. Cela pourrait vous être utile...'), nl,
-		assert(est_remis(formulaireWWW)),
+		write('Bienvenue. Voici le laissez-passer M-47 et la carte du visiteur.'), nl,
+		write('Cela pourrait vous être utile...'), nl,
+		assert(est_remis(laissez-passer_M-47)),
 		assert(est_remis(carte_visiteur)),
-		ramasser(formulaireWWW, en_main),
+		ramasser(laissez-passer_M-47, en_main),
 		ramasser(carte_visiteur, en_main).
 
 % Avec le gardien
 
 parler :-
 		je_suis_a(salle7),
-		il_y_a(formulaireYYY, en_main),
+		il_y_a(laissez-passer_W-51, en_main),
 		assert(avec(gardien)),
 		write('Bonjour ! Je vais rester avec vous pour pouvoir vous ouvrir la porte de la bibliothèque.'),
 		nl, !.
@@ -385,7 +384,7 @@ parler :-
 		il_y_a(torche, en_main),
 		write('Bonjour ! C''est gentil de m''apporter une torche pour éclairer ma loge.'), nl,
 		write('Malheureusement je ne peux rien faire pour vous'), nl,
-		write('si vous n''avez pas le formulaire YYY...'),
+		write('si vous n''avez pas le laissez-passer W-51...'),
 		nl, !.
 
 parler :-
@@ -405,25 +404,50 @@ parler :-
 
 parler :-
 		je_suis_a(salle5),
-		il_y_a(formulaireZZZ, en_main),
-		est_signe(formulaireZZZ),
+		il_y_a(laissez-passer_R-24, en_main),
+		est_signe(laissez-passer_R-24),
 		assert(est_remis(passe_directeur),
-		write('Je vois que vous avez le formulaire ZZZ signé.'), nl,
+		write('Je vois que vous avez le laissez-passer R-24 signé.'), nl,
 		write('Je vous remets donc mon passe qui vous donnera accès à la salle des archives'), nl,
 		ramasser(passe_directeur), !.
 
 parler :-
 		je_suis_a(salle5),
-		il_y_a(formulaireZZZ, en_main),
+		il_y_a(laissez-passer_R-24, en_main),
 		write('Vous débarquez d''où ? Il faut la signature de la secrétaire'), nl,
-		write('sur le formulaire ZZZ. Le gardien va vous amener à la cage des lions...'), nl,
+		write('sur le laissez-passer R-24. Gardien ! Amenez-les à la cage des lions...'), nl,
 		mourir.
 
 parler :-
 		je_suis_a(salle5),
-		write('Alors il va me falloir le formulaire ZZZ signé par la secrétaire.')
+		write('Alors il va me falloir le laissez-passer R-24 signé par la secrétaire.')
 		write('Parce que là, je ne peux rien faire... Au revoir !'), nl.
-		
+
+/* Règles pour commencer une partie /*
+
+mode_emploi :-
+		nl,
+        write('Entrez les commandes avec la syntaxe Prolog standard.'), nl,
+        write('Les commandes disponibles sont :'), nl,
+        write('demarrer.         -- pour commencer une partie'), nl,
+        write('n. s. e. o. m. d. -- pour aller dans une direction'), nl,
+        write('ramasser(Objet).  -- pour ramasser un objet'), nl,
+        write('deposer(Objet).   -- pour laisser tomber un objet'), nl,
+		write('parler.           -- pour parler à un NPC'), nl,
+        write('regarder.         -- pour regarder de nouveau autour de vous'), nl,
+        write('mode_emploi.      -- pour afficher le mode d''emploi de nouveau'), nl,
+        write('terminer.         -- pour terminer la partie'), nl,
+        nl.
+
+consigne :-
+		nl,
+		write('Vous êtes Idéfix, le petit chien d''Obélix.'), nl,
+		write('Vous, votre maître et Astérix êtes enfermés de nouveau'), nl,
+		write('dans la maison qui rend fou des 12 travaux d''Astérix.'), nl,
+		write('Votre but est de revenir à votre point de départ muni'), nl,
+		write('du laissez-passer A-38. Bonne chance !'), nl.
+
+demarrer :- mode_emploi, consigne, regarder.
 
 /* Règle qui définit la mort */
 
