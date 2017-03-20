@@ -2,13 +2,18 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1, avec/1, est_present/2.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)), retractall(est_present(_,_)).
+:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1, avec/1, est_present/2,
+        je_monte/1, correct/1, essai/1.
+
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)), retractall(est_present(_,_)),
+        retractall(je_monte(_)), retractall(correct(_)), retractall(essai(_)).
 
 % Point de départ du joueur
 
 je_suis_a(entree).
 je_possede(0).
+je_monte(0).
+essai(0).
 
 /* Définition de l'environnement */
 
@@ -39,7 +44,8 @@ chemin(escalierRdc, m, escalierEtage).
 
 % Étage
 
-chemin(escalierEtage, s, croisementEtage).
+chemin(escalierEtage, s, croisementEtage) :- je_monte(N), M is N-1, correct(M).
+chemin(escalierEtage, s, croisementEtage) :- fail.
 chemin(escalierEtage, d, escalierRdc).
 
 chemin(croisementEtage, e, couloirDroitEtage).
@@ -103,7 +109,11 @@ o :- aller(o).
 % Monter, Descendre
 
 d :- aller(d).
-m :- aller(m).
+m :- aller(m),
+        nl, write("Vous vous retrouver face à un sphinx. Vous avez 2 essais pour répondre"),
+        nl, write("à sa question. En cas d'échec, c'est la mort assurée. Sauf si vous utilisez"),
+        nl, write("votre gourde de potion magique..."),
+        nl, je_monte(N), question(N).
 
 /* Règle pour se déplacer dans une direction donnée */
 
@@ -491,6 +501,7 @@ mode_emploi :-
         nl, write('deposer(Objet).   -- pour laisser tomber un objet'),
         nl, write('parler.           -- pour parler à un NPC'),
         nl, write('regarder.         -- pour regarder de nouveau autour de vous'),
+        nl, write('repondre(Reponse) -- pour répondre aux énigmes du Sphinx'),
         nl, write('inventaire.       -- pour afficher ce que vous portez'),
         nl, write('mode_emploi.      -- pour afficher le mode d''emploi de nouveau'),
         nl, write('consigne.         -- pour afficher l''objectif du jeu de nouveau'),
@@ -519,5 +530,62 @@ mourir :-
 terminer :-
         nl, write('La partie est terminée. Tapez la commande "halt."'),
         nl, !.
+
+/* Questions et réponses des énigmes du Sphinx */
+
+% Réponses
+
+reponse(0, a).
+reponse(1, b).
+reponse(2, c).
+
+% Questions
+
+question(0) :-
+        nl, write("Voici la question : Pierre dort à partir de 8h du soir,"),
+        nl, write("il a réglé son réveil analogique sur 10h parce qu'il doit se lever le lendemain."),
+        nl, write("Pierre va dormir combien d'heures ?"),
+        nl, write("  a : 2 heures"),
+        nl, write("  b : 12 heures"),
+        nl, write("  c : 10 heures"),
+        nl, write("  d : 14 heures"),
+        nl.
+
+question(1) :-
+        nl, write("Voici la question : Pierre dort à partir de 8h du soir,"),
+        nl, write("il a réglé son réveil analogique sur 10h parce qu'il doit se lever le lendemain."),
+        nl, write("Pierre va dormir combien d'heures ?"),
+        nl, write("  a : 12 heures"),
+        nl, write("  b : 2 heures"),
+        nl, write("  c : 10 heures"),
+        nl, write("  d : 14 heures"),
+        nl.
+
+question(2) :-
+        nl, write("Voici la question : Pierre dort à partir de 8h du soir,"),
+        nl, write("il a réglé son réveil analogique sur 10h parce qu'il doit se lever le lendemain."),
+        nl, write("Pierre va dormir combien d'heures ?"),
+        nl, write("  a : 5 heures"),
+        nl, write("  b : 12 heures"),
+        nl, write("  c : 2 heures"),
+        nl, write("  d : 14 heures"),
+        nl.
+
+/* Règles pour répondre aux questions du Sphinx */
+
+repondre(X) :-
+        je_monte(N), reponse(N, X), !,
+        nl, write("Réponse correcte, vous pouvez monter !"),
+        nl, essai(M), M =< 1, retract(essai(M)), assert(essai(0)), assert(correct(N)),
+        O is N+1, !, retract(je_monte(N)), assert(je_monte(O)).
+
+repondre(_) :-
+        essai(N), N < 1, !, M is N+1, retract(essai(N)), assert(essai(M)),
+        nl, write("Réponse incorrecte... Plus qu'un essai !"), nl.
+
+repondre(_) :-
+        essai(N), N > 0,
+        nl, write("C'est un échec ! Vous êtes condamné à mourir ! Ha ha ha ha."),
+        nl, terminer.
 
 % Fin
