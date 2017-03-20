@@ -307,12 +307,12 @@ ramasser(X) :-
         nl, !.
 
 ramasser(cle) :-
-        il_y_a(X, Endroit),
-        retract(il_y_a(X, Endroit)), assert(il_y_a(X, en_main)),
+        il_y_a(cle, Endroit),
+        retract(il_y_a(cle, Endroit)), assert(il_y_a(cle, en_main)),
         je_possede(N),
         N =< 4, M is N+1,
         retract(je_possede(N)), assert(je_possede(M)),
-        nl, write('Désormais, je possède un(e) '), write(X),
+        nl, write('Désormais, je possède un(e) cle'),
         nl, write('Il faut que je la conserve précieusement'),
         nl, write('car si je la dépose, je ne suis pas sûr(e) de la retrouver...'),
         nl, !.
@@ -321,6 +321,16 @@ ramasser(X) :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
         retract(il_y_a(X, Endroit)), assert(il_y_a(X, en_main)),
+        je_possede(N),
+        N =< 4, M is N+1,
+        retract(je_possede(N)), assert(je_possede(M)),
+        nl, write('Désormais, je possède un(e) '), write(X),
+        nl, !.
+
+ramasser(X) :-
+        je_suis_a(Endroit),
+        il_y_a(X, Endroit),
+        retract(il_y_a(X, Endroit) :- il_y_a(cle, en_main)), assert(il_y_a(X, en_main)),
         je_possede(N),
         N =< 4, M is N+1,
         retract(je_possede(N)), assert(je_possede(M)),
