@@ -504,9 +504,13 @@ mode_emploi :-
         nl, write("inventaire.        -- pour afficher ce que vous portez"),
         nl, write("mode_emploi.       -- pour afficher le mode d’emploi de nouveau"),
         nl, write("consigne.          -- pour afficher l’objectif du jeu de nouveau"),
+        nl, write("reprendre.         -- pour rependre la partie sauvegardée"),
+        nl, write("quitter.           -- pour quitter en sauvegardant la partie"),
         nl, write("terminer.          -- pour terminer la partie sans sauvegarder"),
-		nl, write("quitter.           -- pour quitter en sauvegardant la partie"),
         nl.
+
+reprendre :-
+        consult('C:/Users/Camille/Desktop/projet-prolog-projet-idefix/sauvegarde.pl').
 
 consigne :-
         nl, write("Vous êtes Idéfix, le petit chien d’Obélix."),
@@ -534,7 +538,7 @@ terminer :-
 /* Règles pour quitter la partie en sauvegardant */
 
 quitter :-
-		tell('C:/Users/Lewan/Documents/GitHub/projet-prolog-projet-idefix/sauvegarde.pl'),
+		tell('C:/Users/Camille/Desktop/projet-prolog-projet-idefix/sauvegarde.pl'),
 		listing(je_suis_a/1),
 		listing(il_y_a/2),
 		listing(je_possede/1),
@@ -711,3 +715,4 @@ repondre(_) :-
         nl, terminer.
 
 % Fin
+

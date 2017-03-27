@@ -4,14 +4,14 @@ je_suis_a(salle1).
 
 :- dynamic il_y_a/2.
 
-il_y_a(cle, salle1).
+il_y_a(torche, salle1).
 il_y_a(laissez-passer_W-51, salle2) :-
 	il_y_a(cle, en_main).
 il_y_a(gourde, salle2) :-
 	il_y_a(cle, en_main).
 il_y_a(laissez-passer_R-24, salle6).
 il_y_a(laissez-passer_A-38, salle8).
-il_y_a(torche, en_main).
+il_y_a(cle, en_main).
 
 :- dynamic je_possede/1.
 
