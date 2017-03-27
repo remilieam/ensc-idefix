@@ -504,7 +504,8 @@ mode_emploi :-
         nl, write("inventaire.        -- pour afficher ce que vous portez"),
         nl, write("mode_emploi.       -- pour afficher le mode d’emploi de nouveau"),
         nl, write("consigne.          -- pour afficher l’objectif du jeu de nouveau"),
-        nl, write("terminer.          -- pour terminer la partie"),
+        nl, write("terminer.          -- pour terminer la partie sans sauvegarder"),
+		nl, write("quitter.           -- pour quitter en sauvegardant la partie"),
         nl.
 
 consigne :-
@@ -527,8 +528,24 @@ mourir :-
 /* Règle pour afficher un message final */
 
 terminer :-
-        nl, write("La partie est terminée. Tapez la commande "halt.""),
+        nl, write("La partie est terminée. Tapez la commande “halt”."),
         nl, !.
+
+/* Règles pour quitter la partie en sauvegardant */
+
+quitter :-
+		tell('C:/Users/Lewan/Documents/GitHub/projet-prolog-projet-idefix/sauvegarde.pl'),
+		listing(je_suis_a/1),
+		listing(il_y_a/2),
+		listing(je_possede/1),
+		listing(est_signe/1),
+		listing(est_remis/1),
+		listing(avec/1),
+		listing(est_present/2),
+        listing(je_monte/1),
+		listing(correct/1),
+		listing(essai/1),
+		told.
 
 /* Questions, réponses et justifications des énigmes du Sphinx */
 
@@ -577,7 +594,7 @@ question(2) :-
         nl.
 
 question(3) :-
-        nl, write("Le fils de cet homme est le père de mon fils.")
+        nl, write("Le fils de cet homme est le père de mon fils."),
         nl, write("Sachant que je ne suis pas une femme,"),
         nl, write("quel est le lien de parenté entre cet homme et moi ?"),
         nl, write("  a : Je suis le fils de cet homme"),
@@ -587,7 +604,7 @@ question(3) :-
         nl.
 
 question(4) :-
-        nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"
+        nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"),
         nl, write("“Je ne mens jamais mais mon voisin de gauche ment toujours.”"),
         nl, write("combien y-a-t il de menteurs ?"),
         nl, write("  a : 100"),
