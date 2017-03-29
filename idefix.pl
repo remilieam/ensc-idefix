@@ -473,7 +473,7 @@ parler :-
         est_signe(laissez-passer_R-24), !,
         assert(est_remis(passe_directeur)),
         nl, write("Je vois que vous avez le laissez-passer R-24 signé."),
-        nl, write("Vous pouvez disposer de mon passe. Je le pose sur mon bureau."),
+        nl, write("Vous pouvez disposer de mon passe_directeur. Je le pose sur mon bureau."),
         nl, assert(il_y_a(passe_directeur, salle5)).
 
 parler :-
