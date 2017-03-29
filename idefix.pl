@@ -118,10 +118,10 @@ m :- aller(m),
 
 aller(Direction) :-
         je_suis_a(Ici),
-        chemin(Ici, Direction, Labas),
+        chemin(Ici, Direction, Labas), !,
         retract(je_suis_a(Ici)),
         assert(je_suis_a(Labas)),
-        regarder, !.
+        regarder.
 
 aller(_) :-
         nl, write("Vous ne pouvez pas aller dans cette direction..."), nl.
@@ -138,16 +138,16 @@ regarder :-
 /* Règles pour afficher la ou les description(s) de l’environnement */
 
 % Rez-de-chaussée
-
-decrire(entree) :-
-        nl, write("Vous vous trouvez à l’entrée du bâtiment, au rez-de-chaussée."),
-        nl, write("Au nord se trouve le croisement de 2 couloirs."),
-        nl.
         
 decrire(entree) :-
         il_y_a(laissez-passer_A-38, en_main),
         nl, write("Bravo ! Vous avez gagné ! Vous allez afin pouvoir sortir de ce bâtiment de fous !"),
         nl, terminer, !.
+
+decrire(entree) :-
+        nl, write("Vous vous trouvez à l’entrée du bâtiment, au rez-de-chaussée."),
+        nl, write("Au nord se trouve le croisement de 2 couloirs."),
+        nl.
 
 decrire(croisementRdc) :-
         nl, write("Vous êtes au croisement du rez-de-chaussée."),
@@ -311,15 +311,15 @@ lister_NPC(_).
 /* Règles pour ramasser un objet */
 
 ramasser(X) :-
-        il_y_a(X, en_main),
+        il_y_a(X, en_main), !,
         nl, write("Ah mais c’est que j’ai déjà ça sur moi !"),
         nl, !.
 
 ramasser(cle) :-
-        il_y_a(cle, Endroit),
-        retract(il_y_a(cle, Endroit)), assert(il_y_a(cle, en_main)),
         je_possede(N),
         N =< 4, M is N+1,
+        il_y_a(cle, Endroit), !,
+        retract(il_y_a(cle, Endroit)), assert(il_y_a(cle, en_main)),
         retract(je_possede(N)), assert(je_possede(M)),
         nl, write("Désormais, je possède un(e) cle"),
         nl, write("Il faut que je la conserve précieusement"),
@@ -327,40 +327,40 @@ ramasser(cle) :-
         nl, !.
 
 ramasser(X) :-
-        je_suis_a(Endroit),
-        il_y_a(X, Endroit),
-        retract(il_y_a(X, Endroit)), assert(il_y_a(X, en_main)),
         je_possede(N),
         N =< 4, M is N+1,
+        je_suis_a(Endroit),
+        il_y_a(X, Endroit),
+        retract(il_y_a(X, Endroit)), !, assert(il_y_a(X, en_main)),
         retract(je_possede(N)), assert(je_possede(M)),
         nl, write("Désormais, je possède un(e) "), write(X),
         nl, !.
 
 ramasser(X) :-
-        je_suis_a(Endroit),
-        il_y_a(X, Endroit),
-        retract(il_y_a(X, Endroit) :- il_y_a(cle, en_main)), assert(il_y_a(X, en_main)),
         je_possede(N),
         N =< 4, M is N+1,
+        je_suis_a(Endroit),
+        il_y_a(X, Endroit),
+        retract(il_y_a(X, Endroit) :- il_y_a(cle, en_main)), !, assert(il_y_a(X, en_main)),
         retract(je_possede(N)), assert(je_possede(M)),
         nl, write("Désormais, je possède un(e) "), write(X),
         nl, !.
 
 ramasser(_) :-
         je_possede(N),
-        N > 4,
+        N > 4, !,
         nl, write("Mince ! J’ai déjà 5 objets dans mon inventaire..."),
         nl, write("Il faut que je dépose quelque chose... Mais quoi ?"),
         nl, !.
 
 ramasser(_) :-
-        nl, write("Je suis bête... Il n’y a rien ici."),
+        nl, write("Je suis bête... Il n’y a pas de ça ici."),
         nl.
 
 /* Règles pour déposer un objet */
 
 deposer(cle) :-
-        il_y_a(cle, en_main),
+        il_y_a(cle, en_main), !,
         retract(il_y_a(cle, en_main)),
         je_possede(N),
         M is N-1,
@@ -370,13 +370,13 @@ deposer(cle) :-
         nl, !.
 
 deposer(X) :-
-        il_y_a(X, en_main),
+        il_y_a(X, en_main), !,
         je_suis_a(Endroit),
         retract(il_y_a(X, en_main)), assert(il_y_a(X, Endroit)),
         je_possede(N),
         M is N-1,
         retract(je_possede(N)), assert(je_possede(M)),
-        nl, write("Aaaah enfin, plus besoin de porter cet(tte) "), write(X),
+        nl, write("Aaaah enfin, plus besoin de porter ce(tte) "), write(X),
         nl, !.
 
 deposer(_) :-
@@ -390,25 +390,25 @@ deposer(_) :-
 parler :-
         je_suis_a(salle3),
         il_y_a(laissez-passer_R-24, en_main),
-        est_signe(laissez-passer_R-24),
+        est_signe(laissez-passer_R-24), !,
         nl, write("J’ai déjà signé le laissez-passer R-24..."),
         nl, write("Vous pouvez dès à présent aller voir le directeur !"),
-        nl, !.
-  
+        nl.
+        
 parler :-
         je_suis_a(salle3),
         il_y_a(laissez-passer_R-24, en_main),
-        assert(est_signe(laissez-passer_R-24)),
+        assert(est_signe(laissez-passer_R-24)), !,
         nl, write("Voilà ! Le laissez-passer R-24 est signé."),
         nl, write("Vous pouvez dès à présent aller voir le directeur !"),
-        nl, !.
+        nl.
 
 parler :-
         je_suis_a(salle3),
         est_remis(laissez-passer_M-47),
-        est_remis(carte_visiteur),
+        est_remis(carte_visiteur), !,
         nl, write("Désolée, je ne peux rien faire pour vous..."),
-        nl, !.
+        nl.
 
 parler :-
         je_suis_a(salle3),
@@ -416,16 +416,16 @@ parler :-
         nl, write("et la carte du visiteur."),
         nl, write("Cela pourrait vous être utile..."),
         nl,
+        je_possede(N),
+        N =< 3, M is N+2, !,
         assert(il_y_a(laissez-passer_M-47, en_main)),
         assert(il_y_a(carte_visiteur, en_main)),
-        je_possede(N),
-        N =< 3, M is N+2,
         retract(je_possede(N)), assert(je_possede(M)),        
         assert(est_remis(laissez-passer_M-47)),
         assert(est_remis(carte_visiteur)),
         nl, write("Désormais, je possède un(e) laissez-passer_M-47"),
         nl, write("et un(e) carte_visiteur."),
-        nl, !.
+        nl.
 
 parler :-
         je_suis_a(salle3),
@@ -437,20 +437,20 @@ parler :-
 
 parler :-
         je_suis_a(salle7),
-        il_y_a(laissez-passer_W-51, en_main),
+        il_y_a(laissez-passer_W-51, en_main), !,
         assert(avec(gardien)),
         retractall(est_present(gardien, salle7)),
         nl, write("Bonjour ! Je vais rester avec vous"),
         nl, write("pour pouvoir vous ouvrir la porte de la bibliothèque."),
-        nl, !.
+        nl.
 
 parler :-
         je_suis_a(salle7),
-        il_y_a(torche, en_main),
+        il_y_a(torche, en_main), !,
         nl, write("Bonjour ! C’est gentil de m’apporter une torche pour éclairer ma loge."),
         nl, write("Malheureusement je ne peux rien faire pour vous"),
         nl, write("si vous n’avez pas le laissez-passer W-51..."),
-        nl, !.
+        nl.
 
 parler :-
         je_suis_a(salle7),
@@ -462,23 +462,23 @@ parler :-
 
 parler :-
         je_suis_a(salle5),
-        est_remis(passe_directeur),
+        est_remis(passe_directeur), !,
         nl, write("Qu’est-ce que vous me voulez encore ! C’est du harcelement !"),
         nl, write("Gardien, amenez-le à la cage aux lions !"),
-        nl, mourir, !.
+        nl, mourir.
 
 parler :-
         je_suis_a(salle5),
         il_y_a(laissez-passer_R-24, en_main),
-        est_signe(laissez-passer_R-24),
+        est_signe(laissez-passer_R-24), !,
         assert(est_remis(passe_directeur)),
         nl, write("Je vois que vous avez le laissez-passer R-24 signé."),
-        nl, write("Je vous remets donc mon passe qui vous donnera accès à la salle des archives"),
-        nl, ramasser(passe_directeur), !.
+        nl, write("Vous pouvez disposer de mon passe. Je le pose sur mon bureau."),
+        nl, assert(il_y_a(passe_directeur, salle5)).
 
 parler :-
         je_suis_a(salle5),
-        il_y_a(laissez-passer_R-24, en_main),
+        il_y_a(laissez-passer_R-24, en_main), !,
         nl, write("Vous débarquez d’où ? Il faut la signature de la secrétaire"),
         nl, write("sur le laissez-passer R-24. Gardien ! Amenez-les à la cage des lions..."),
         nl, mourir.
@@ -510,7 +510,7 @@ mode_emploi :-
         nl.
 
 reprendre :-
-        consult('C:/Users/Camille/Desktop/projet-prolog-projet-idefix/sauvegarde.pl').
+        consult('sauvegarde.pl').
 
 consigne :-
         nl, write("Vous êtes Idéfix, le petit chien d’Obélix."),
@@ -538,18 +538,18 @@ terminer :-
 /* Règles pour quitter la partie en sauvegardant */
 
 quitter :-
-		tell('C:/Users/Camille/Desktop/projet-prolog-projet-idefix/sauvegarde.pl'),
-		listing(je_suis_a/1),
-		listing(il_y_a/2),
-		listing(je_possede/1),
-		listing(est_signe/1),
-		listing(est_remis/1),
-		listing(avec/1),
-		listing(est_present/2),
+        tell('sauvegarde.pl'),
+        listing(je_suis_a/1),
+        listing(il_y_a/2),
+        listing(je_possede/1),
+        listing(est_signe/1),
+        listing(est_remis/1),
+        listing(avec/1),
+        listing(est_present/2),
         listing(je_monte/1),
-		listing(correct/1),
-		listing(essai/1),
-		told.
+        listing(correct/1),
+        listing(essai/1),
+        told.
 
 /* Questions, réponses et justifications des énigmes du Sphinx */
 
