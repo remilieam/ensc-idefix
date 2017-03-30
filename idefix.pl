@@ -1,21 +1,4 @@
-﻿/* Prérequis */
-
-% Prédicats dynamiques
-
-:- dynamic je_suis_a/1, il_y_a/2, je_possede/1, est_signe/1, est_remis/1, avec/1, est_present/2,
-        je_monte/1, correct/1, essai/1.
-
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(je_possede(_)), retractall(est_present(_,_)),
-        retractall(je_monte(_)), retractall(correct(_)), retractall(essai(_)).
-
-% Point de départ du joueur
-
-je_suis_a(entree).
-je_possede(0).
-je_monte(0).
-essai(0).
-
-/* Définition de l’environnement */
+﻿/* Définition de l’environnement */
 
 % Rez-de-chaussée
 
@@ -69,23 +52,6 @@ chemin(balcon, o, salle7).
 chemin(balcon, e, salle8) :- il_y_a(passe_directeur, en_main).
 chemin(balcon, e, salle8) :- nl, write("Impossible ! Il faut le passe du directeur !"), nl, fail.
 chemin(balcon, n, croisementEtage).
-
-/* Définition des objets et des NPC */
-
-% Objets
-
-il_y_a(cle, salle1).
-il_y_a(torche, salle1).
-il_y_a(laissez-passer_W-51, salle2) :- il_y_a(cle, en_main).
-il_y_a(gourde, salle2) :- il_y_a(cle, en_main).
-il_y_a(laissez-passer_R-24, salle6).
-il_y_a(laissez-passer_A-38, salle8).
-
-% NPC
-
-est_present(secretaire, salle3).
-est_present(directeur, salle5).
-est_present(gardien, salle7).
 
 /* Règles pour afficher l’inventaire */
 
@@ -152,11 +118,11 @@ decrire(entree) :-
 decrire(croisementRdc) :-
         nl, write("Vous êtes au croisement du rez-de-chaussée."),
         nl, write("Au nord se trouve un escalier gardé par un méchant sphinx."),
-        nl, write("À l’est comme à l’ouest, vous pouvez vous engader dans un sombre couloir"),
+        nl, write("À l’est comme à l’ouest, vous pouvez vous engager dans un sombre couloir."),
         nl.
 
 decrire(couloirGaucheRdc) :-
-        nl, write("Vous êtes dans un couloir minion."),
+        nl, write("Vous êtes dans un couloir « minion »."),
         nl, write("Deux salles s’ouvrent à vous au sud et au nord."),
         nl, write("À l’est se trouve le croisement."),
         nl.
@@ -164,6 +130,8 @@ decrire(couloirGaucheRdc) :-
 decrire(couloirDroitRdc) :-
         nl, write("Vous êtes dans un couloir sombre."),
         nl, write("Deux salles s’ouvrent à vous au sud et au nord."),
+        nl, write("De celle du sud s’échappe des grondements qui"),
+        nl, write("n’augurent rien de bon..."),
         nl, write("À l’ouest se trouve le croisement."),
         nl.
 
@@ -174,8 +142,8 @@ decrire(salle1) :-
 
 decrire(salle2) :- 
         nl, write("Vous êtes dans un salle dans laquelle sont posées au sol"),
-        nl, write("deux coffres fermés à clé."),
-        nl, write("La porte de sortie se trouve au sud."),
+        nl, write("deux coffres fermés à clé. Il s’agirait donc de posséder une clé"),
+        nl, write("avant de revenir... La porte de sortie se trouve au sud."),
         nl.
 
 decrire(salle2) :- 
@@ -193,7 +161,7 @@ decrire(salle3) :-
 decrire(salle3) :- 
         il_y_a(laissez-passer_R-24, en_main),
         nl, write("Vous êtes à l’accueil !"),
-        nl, write("Vous pouvez faire signer ici le laissez-passer _R-24."),
+        nl, write("Vous pouvez faire signer ici le laissez-passer R-24."),
         nl, write("Pour partir, prenez la porte qui se trouve au nord."),
         nl.
 
@@ -227,7 +195,6 @@ decrire(couloirDroitEtage) :-
 decrire(couloirGaucheEtage) :-
         nl, write("Vous vous trouvez au niveau du couloir gauche du premier étage."),
         nl, write("Au nord se trouve le bureau du directeur."),
-        nl, write("Au sud se trouve la loge du gardien."),
         nl, write("À l’est se trouve le croisement des couloirs du premier étage."),
         nl.
         
@@ -390,25 +357,25 @@ deposer(_) :-
 parler :-
         je_suis_a(salle3),
         il_y_a(laissez-passer_R-24, en_main),
-        est_signe(laissez-passer_R-24), !,
+        est_signe(laissez-passer_R-24),
         nl, write("J’ai déjà signé le laissez-passer R-24..."),
         nl, write("Vous pouvez dès à présent aller voir le directeur !"),
-        nl.
+        nl, !.
         
 parler :-
         je_suis_a(salle3),
-        il_y_a(laissez-passer_R-24, en_main),
-        assert(est_signe(laissez-passer_R-24)), !,
+        il_y_a(laissez-passer_R-24, en_main), !,
+        assert(est_signe(laissez-passer_R-24)),
         nl, write("Voilà ! Le laissez-passer R-24 est signé."),
         nl, write("Vous pouvez dès à présent aller voir le directeur !"),
-        nl.
+        nl, !
 
 parler :-
         je_suis_a(salle3),
         est_remis(laissez-passer_M-47),
         est_remis(carte_visiteur), !,
         nl, write("Désolée, je ne peux rien faire pour vous..."),
-        nl.
+        nl, !.
 
 parler :-
         je_suis_a(salle3),
@@ -425,7 +392,7 @@ parler :-
         assert(est_remis(carte_visiteur)),
         nl, write("Désormais, je possède un(e) laissez-passer_M-47"),
         nl, write("et un(e) carte_visiteur."),
-        nl.
+        nl, !.
 
 parler :-
         je_suis_a(salle3),
@@ -442,7 +409,7 @@ parler :-
         retractall(est_present(gardien, salle7)),
         nl, write("Bonjour ! Je vais rester avec vous"),
         nl, write("pour pouvoir vous ouvrir la porte de la bibliothèque."),
-        nl.
+        nl, !.
 
 parler :-
         je_suis_a(salle7),
@@ -450,13 +417,13 @@ parler :-
         nl, write("Bonjour ! C’est gentil de m’apporter une torche pour éclairer ma loge."),
         nl, write("Malheureusement je ne peux rien faire pour vous"),
         nl, write("si vous n’avez pas le laissez-passer W-51..."),
-        nl.
+        nl, !.
 
 parler :-
         je_suis_a(salle7),
         nl, write("Vous osez me déranger pour rien ! Comment osez-vous ?!!"),
         nl, write("Allez, direction la cage aux lions, et fissa !"),
-        nl, mourir.
+        nl, mourir, !.
 
 % Avec le directeur
 
@@ -465,62 +432,71 @@ parler :-
         est_remis(passe_directeur), !,
         nl, write("Qu’est-ce que vous me voulez encore ! C’est du harcelement !"),
         nl, write("Gardien, amenez-le à la cage aux lions !"),
-        nl, mourir.
+        nl, mourir, !.
 
 parler :-
         je_suis_a(salle5),
         il_y_a(laissez-passer_R-24, en_main),
         est_signe(laissez-passer_R-24), !,
-        assert(est_remis(passe_directeur)),
         nl, write("Je vois que vous avez le laissez-passer R-24 signé."),
         nl, write("Vous pouvez disposer de mon passe_directeur. Je le pose sur mon bureau."),
-        nl, assert(il_y_a(passe_directeur, salle5)).
+        nl, assert(est_remis(passe_directeur)), assert(il_y_a(passe_directeur, salle5)).
 
 parler :-
         je_suis_a(salle5),
         il_y_a(laissez-passer_R-24, en_main), !,
         nl, write("Vous débarquez d’où ? Il faut la signature de la secrétaire"),
         nl, write("sur le laissez-passer R-24. Gardien ! Amenez-les à la cage des lions..."),
-        nl, mourir.
+        nl, mourir, !.
 
 parler :-
         je_suis_a(salle5),
         nl, write("Alors il va me falloir le laissez-passer R-24 signé par la secrétaire."),
         nl, write("Parce que là, je ne peux rien faire... Au revoir !"),
-        nl.
+        nl, !.
+
+% Avec personnel
+
+parler :-
+        nl, write("Il n’y a personne à qui parler ici."),
+        nl, fail.
 
 /* Règles pour commencer une partie */
 
 mode_emploi :-
         nl, write("Entrez les commandes avec la syntaxe Prolog standard."),
         nl, write("Les commandes disponibles sont :"),
-        nl, write("demarrer.          -- pour commencer une partie"),
+        nl, write("demarrer.          -- pour démarrer le jeu d’aventure"),
+        nl, write("commencer.         -- pour commencer une nouvelle partie"),
+        nl, write("reprendre.         -- pour reprendre la partie sauvegardée"),
         nl, write("n. s. e. o. m. d.  -- pour aller dans une direction"),
         nl, write("ramasser(Objet).   -- pour ramasser un objet"),
-        nl, write("deposer(Objet).    -- pour laisser tomber un objet"),
+        nl, write("deposer(Objet).    -- pour déposer un objet"),
         nl, write("parler.            -- pour parler à un NPC"),
         nl, write("regarder.          -- pour regarder de nouveau autour de vous"),
-        nl, write("repondre(Reponse). -- pour répondre aux énigmes du Sphinx"),
+        nl, write("repondre(Reponse). -- pour répondre aux énigmes du Sphinx (la réponse est a, b, c ou d)"),
         nl, write("inventaire.        -- pour afficher ce que vous portez"),
-        nl, write("mode_emploi.       -- pour afficher le mode d’emploi de nouveau"),
+        nl, write("mode_emploi.       -- pour afficher le mode d’emploi"),
         nl, write("consigne.          -- pour afficher l’objectif du jeu de nouveau"),
-        nl, write("reprendre.         -- pour rependre la partie sauvegardée"),
         nl, write("quitter.           -- pour quitter en sauvegardant la partie"),
         nl, write("terminer.          -- pour terminer la partie sans sauvegarder"),
         nl.
 
-reprendre :-
-        consult('sauvegarde.pl').
+commencer :-
+        consult('initialisation.pl'), mode_emploi, regarder.
 
-consigne :-
+reprendre :-
+        consult('sauvegarde.pl'), mode_emploi, regarder.
+
+demarrer :-
         nl, write("Vous êtes Idéfix, le petit chien d’Obélix."),
         nl, write("Vous, votre maître et Astérix êtes enfermés de nouveau"),
         nl, write("dans la maison qui rend fou des 12 travaux d’Astérix."),
         nl, write("Votre but est de revenir à votre point de départ muni"),
         nl, write("du laissez-passer A-38. Bonne chance !"),
-        nl.
-
-demarrer :- mode_emploi, consigne, regarder.
+        nl,
+        nl, write("Entrer la commande « commencer. » pour commencer une nouvelle partie"),
+        nl, write("ou la commande « reprendre. » pour reprendre la dernière partie sauvée.").
 
 /* Règle qui définit la mort */
 
@@ -532,7 +508,7 @@ mourir :-
 /* Règle pour afficher un message final */
 
 terminer :-
-        nl, write("La partie est terminée. Tapez la commande “halt”."),
+        nl, write("La partie est terminée. Tapez la commande « halt »."),
         nl, !.
 
 /* Règles pour quitter la partie en sauvegardant */
@@ -580,12 +556,12 @@ question(0) :-
         nl.
 
 question(1) :-
-        nl, write("Une poule et demi pond un œuf et demi en un jour et demi."),
+        nl, write("Une poule et demi pond un oeuf et demi en un jour et demi."),
         nl, write("Combien d’œufs pond une poule en trente jours ?"),
-        nl, write("  a : 15 œufs"),
-        nl, write("  b : 20 œufs"),
-        nl, write("  c : 45 œufs"),
-        nl, write("  d : 30 œufs"),
+        nl, write("  a : 15 oeufs"),
+        nl, write("  b : 20 oeufs"),
+        nl, write("  c : 45 oeufs"),
+        nl, write("  d : 30 oeufs"),
         nl.
 
 question(2) :-
@@ -609,7 +585,7 @@ question(3) :-
 
 question(4) :-
         nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"),
-        nl, write("“Je ne mens jamais mais mon voisin de gauche ment toujours.”"),
+        nl, write("« Je ne mens jamais mais mon voisin de gauche ment toujours. »"),
         nl, write("combien y-a-t il de menteurs ?"),
         nl, write("  a : 100"),
         nl, write("  b : 99"),
@@ -701,7 +677,7 @@ justification(2) :-
 
 repondre(X) :-
         je_monte(N), reponse(N, X), !,
-        nl, write("Réponse correcte, vous pouvez monter !"),
+        nl, write("Réponse correcte, vous pouvez continuer en tapant la commande « s. » !"),
         nl, essai(M), M =< 1, retract(essai(M)), assert(essai(0)), assert(correct(N)),
         O is N+1, !, retract(je_monte(N)), assert(je_monte(O)).
 
