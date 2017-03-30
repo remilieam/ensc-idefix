@@ -75,10 +75,17 @@ o :- aller(o).
 % Monter, Descendre
 
 d :- aller(d).
-m :- aller(m),
+
+m :- je_suis_a(escalierRdc),
+        aller(m),
         nl, write("Si vous voulez continuer, il faut répondre à la question posée pour le Sphinx."),
-        nl, write("Vous avez 2 essais pour répondre. En cas d’échec, c’est la mort assurée"),
-        nl, je_monte(N), question(N).
+        nl, write("Vous avez 2 essais pour répondre. En cas d’échec, c’est la mort assurée !"),
+        nl, write("Sauf si vous m’offrez une gourde de potion magique..."),
+        nl, write("Donc si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
+        nl, write("à ma question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
+        nl, je_monte(N), question(N), !.
+
+m :- aller(m).
 
 /* Règle pour se déplacer dans une direction donnée */
 
@@ -368,7 +375,7 @@ parler :-
         assert(est_signe(laissez-passer_R-24)),
         nl, write("Voilà ! Le laissez-passer R-24 est signé."),
         nl, write("Vous pouvez dès à présent aller voir le directeur !"),
-        nl, !
+        nl, !.
 
 parler :-
         je_suis_a(salle3),
@@ -474,7 +481,7 @@ mode_emploi :-
         nl, write("deposer(Objet).    -- pour déposer un objet"),
         nl, write("parler.            -- pour parler à un NPC"),
         nl, write("regarder.          -- pour regarder de nouveau autour de vous"),
-        nl, write("repondre(Reponse). -- pour répondre aux énigmes du Sphinx (la réponse est a, b, c ou d)"),
+        nl, write("repondre(Reponse). -- pour répondre aux énigmes du Sphinx"),
         nl, write("inventaire.        -- pour afficher ce que vous portez"),
         nl, write("mode_emploi.       -- pour afficher le mode d’emploi"),
         nl, write("consigne.          -- pour afficher l’objectif du jeu de nouveau"),
@@ -557,7 +564,7 @@ question(0) :-
 
 question(1) :-
         nl, write("Une poule et demi pond un oeuf et demi en un jour et demi."),
-        nl, write("Combien d’œufs pond une poule en trente jours ?"),
+        nl, write("Combien d’oeufs pond une poule en trente jours ?"),
         nl, write("  a : 15 oeufs"),
         nl, write("  b : 20 oeufs"),
         nl, write("  c : 45 oeufs"),
@@ -675,15 +682,23 @@ justification(2) :-
 
 /* Règles pour répondre aux questions du Sphinx */
 
+repondre(gourde) :-
+        il_y_a(gourde, en_main), !,
+        nl, write("Vous pouvez continuer en tapant la commande « s. » !"),
+        nl, essai(M), retract(essai(M)), assert(essai(0)), assert(correct(N)),
+        je_monte(N), O is N+1, !, retract(je_monte(N)), assert(je_monte(O)),
+        retract(il_y_a(gourde, en_main)), je_possede(P), Q is P-1,
+        retract(je_possede(P)), assert(je_possede(Q)), !.
+
 repondre(X) :-
         je_monte(N), reponse(N, X), !,
         nl, write("Réponse correcte, vous pouvez continuer en tapant la commande « s. » !"),
         nl, essai(M), M =< 1, retract(essai(M)), assert(essai(0)), assert(correct(N)),
-        O is N+1, !, retract(je_monte(N)), assert(je_monte(O)).
+        O is N+1, !, retract(je_monte(N)), assert(je_monte(O)), !.
 
 repondre(_) :-
         essai(N), N < 1, !, M is N+1, retract(essai(N)), assert(essai(M)),
-        nl, write("Réponse incorrecte... Plus qu’un essai !"), nl.
+        nl, write("Réponse incorrecte... Plus qu’un essai !"), nl, !.
 
 repondre(_) :-
         essai(N), N > 0,
