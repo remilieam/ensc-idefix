@@ -463,7 +463,7 @@ parler :-
         nl, write("Parce que là, je ne peux rien faire... Au revoir !"),
         nl, !.
 
-% Avec personnel
+% Avec personne
 
 parler :-
         nl, write("Il n’y a personne à qui parler ici."),
@@ -593,7 +593,7 @@ question(3) :-
 question(4) :-
         nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"),
         nl, write("« Je ne mens jamais mais mon voisin de gauche ment toujours. »"),
-        nl, write("combien y-a-t il de menteurs ?"),
+        nl, write("Combien y-a-t il de menteurs ?"),
         nl, write("  a : 100"),
         nl, write("  b : 99"),
         nl, write("  c : 1"),
@@ -624,7 +624,7 @@ question(6) :-
 question(7) :-
         nl, write("Imaginons que vous ayez énormément d’amis (un nombre infini)."),
         nl, write("Le premier vient vous voir et vous demande 1/2 coupe de champagne."),
-        nl, write("Le deuxième vous demande 1/4 de coupe du champagne. Le troisième demande 1/8. Etc"),
+        nl, write("Le deuxième vous demande 1/4 de coupe du champagne. Le troisième demande 1/8. Etc."),
         nl, write("Combien devez-vous prévoir de coupe de champagne ?"),
         nl, write("  a : Une infinité"),
         nl, write("  b : 100"),
