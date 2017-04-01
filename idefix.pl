@@ -83,7 +83,8 @@ m :- je_suis_a(escalierRdc),
         nl, write("Sauf si vous m’offrez une gourde de potion magique..."),
         nl, write("Donc si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
         nl, write("à ma question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
-        nl, je_monte(N), question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)), !.
+        nl, je_monte(N), question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)),
+        essai(P), retract(essai(P)), assert(essai(0)), !.
 
 m :- aller(m).
 
@@ -179,8 +180,8 @@ decrire(salle4) :-
 
 decrire(escalierRdc) :-
         nl, write("Vous vous trouvez dans un majestueux escalier vraiment très haut."),
-        nl, write("Vous pouvez monter à l’étage à vos riques et périls,"),
-        nl, write("ou aller au rez-de-chaussée au sud"),
+        nl, write("Vous pouvez monter à l’étage à vos risques et périls,"),
+        nl, write("ou aller au rez-de-chaussée au sud."),
         nl.
 
 % Étage
@@ -188,7 +189,7 @@ decrire(escalierRdc) :-
 decrire(croisementEtage) :-
         nl, write("Vous vous trouvez au croisement du première étage."),
         nl, write("Au nord se trouve l’escalier qui conduit au rez-de-chaussée."),
-        nl, write("À l’est se trouve le couloir de droite"),
+        nl, write("À l’est se trouve le couloir de droite."),
         nl, write("À l’ouest se trouve le couloir de gauche."),
         nl, write("Au sud, se trouve le balcon."),
         nl.
@@ -227,7 +228,7 @@ decrire(salle6) :-
 decrire(salle6) :-
         nl, write("Vous êtes dans la bibliothèque."),
         nl, write("Une alarme se déclenche... et le gardien arrive."),
-        nl, write("Il vous conduit directement à la cage aux lions"),
+        nl, write("Il vous conduit directement à la cage aux lions."),
         nl, mourir.
 
 decrire(salle7) :-
@@ -741,7 +742,7 @@ repondre(X) :-
         je_monte(N), M is N-1, reponse(M, X), !,
         nl, write("Réponse correcte, vous pouvez continuer en tapant la commande « s. » !"),
         nl, write("Voici la justification à la question :"),
-        nl, justification(M), essai(P), P =< 1, retract(essai(P)), assert(essai(0)), assert(correct(M)),
+        nl, justification(M), essai(P), P =< 1, assert(correct(M)),
         !.
 
 repondre(_) :-
