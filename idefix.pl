@@ -643,7 +643,7 @@ question(8) :-
         nl.
 
 question(9) :-
-        nl, write("Quelle est la moitié de 2 + 2 ?"),
+        nl, write("Quelle est la moitié de 2 plus 2 ?"),
         nl, write("  a : 3"),
         nl, write("  b : 2"),
         nl, write("  c : 1"),
@@ -678,6 +678,54 @@ justification(2) :-
         nl, write("Sachant qu’elle a une fille, il y a 3 cas de figure possible."),
         nl, write("Et il y a deux cas dans lesquels, on a un garçon également."),
         nl, write("Annie a donc 2 chance sur 3 d’avoir un garçon comme deuxième enfant."),
+        nl.
+
+justification(3) :-
+        nl, write("Réponse a : Si je suis le fils de cet homme car"),
+        nl, write("le père de mon fils, c’est  moi, et"),
+        nl, write("si le fils de cet homme, c’est moi, alors cet homme est mon père."),
+        nl
+
+justification(4) :-
+        nl, write("Réponse d : Une personnes sur deux ne ment jamais et une sur deux ment toujours."),
+        nl, write("Un menteur ou une personne disant la vérité diront toujours qu’ils disent la vérité."),
+        nl, write("Un menteur dira de son voisin de gauche (qui dit la vérité) qu’il ment."),
+        nl, write("Une personne qui dit la vérité dira de son voisin de gauche (qui ment), qu’il ment."),
+        nl, write("Ainsi, il y a alternance entre personnes disant la vérité et menteurs,"),
+        nl, write("d’où le fait qu’il y a la moitié qui mentent."),
+        nl.
+
+justification(5) :-
+        nl, write("Réponse b : L’homme avance toujours vers l’ouest et finit par retrouver son camion."),
+        nl, write("C’est donc qu’il tourne en rond. Or, les seuls endroits au monde où avancer"),
+        nl, write("vers l’ouest fait tourner en rond, ce sont les pôles. Et comme il n’y a pas d’ours"),
+        nl, write("au pôle sud, il est forcément au pôle nord où les ours sont blancs."),
+        nl.
+
+justification(6) :-
+        nl, write("Réponse d : Car les baleines et les dauphins sont des mammifères et non des poissons."),
+        nl.
+
+justification(7) :-
+        nl, write("Réponse c : Une seule coupe de champagne suffira. Car en mathématiques,"),
+        nl, write("cette suite infinie vaut 1 : 1/2 + 1/4 + 1/8 + 1/16 + ... + 1/2^n = 1"),
+        nl.
+
+justification(8) :-
+        nl, write("Réponse c : En 2 jours ... car 1/4 fois 2 = 1/2 et 1/2 fois 2 = 4/4,"),
+        nl, write("donc il faut seulement 2 jours."),
+        nl.
+
+justification(9) :-
+        nl, write("Réponse a : Le calcul est (la moitié de 2) plus 2, soit 2/2 + 2 = 1 + 2 = 3"),
+        nl, write("Le piège à éviter est de faire : la moitié de (2 plus 2) qui donne 2."),
+        nl, write("Mais dans l’énoncé, il n’y a pas de parenthèse."),
+        nl.
+
+justification(10) :-
+        nl, write("Réponse b : Les 7 premiers jours il monte de 1 mètre (3 moins 2),"),
+        nl, write("mais le 8e jour il monte à nouveau de 3 mètres,"),
+        nl, write("et donc il est arrivé en haut du puits. (7 + 3 = 10.)"),
         nl.
 
 /* Règles pour répondre aux questions du Sphinx */
