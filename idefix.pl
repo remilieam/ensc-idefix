@@ -83,7 +83,7 @@ m :- je_suis_a(escalierRdc),
         nl, write("Sauf si vous m’offrez une gourde de potion magique..."),
         nl, write("Donc si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
         nl, write("à ma question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
-        nl, je_monte(N), question(N), !.
+        nl, je_monte(N), question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)), !.
 
 m :- aller(m).
 
@@ -477,14 +477,13 @@ mode_emploi :-
         nl, write("commencer.         -- pour commencer une nouvelle partie"),
         nl, write("reprendre.         -- pour reprendre la partie sauvegardée"),
         nl, write("n. s. e. o. m. d.  -- pour aller dans une direction"),
-        nl, write("ramasser(Objet).   -- pour ramasser un objet"),
-        nl, write("deposer(Objet).    -- pour déposer un objet"),
         nl, write("parler.            -- pour parler à un NPC"),
         nl, write("regarder.          -- pour regarder de nouveau autour de vous"),
+        nl, write("ramasser(Objet).   -- pour ramasser un objet"),
+        nl, write("deposer(Objet).    -- pour déposer un objet"),
         nl, write("repondre(Reponse). -- pour répondre aux énigmes du Sphinx"),
-        nl, write("inventaire.        -- pour afficher ce que vous portez"),
         nl, write("mode_emploi.       -- pour afficher le mode d’emploi"),
-        nl, write("consigne.          -- pour afficher l’objectif du jeu de nouveau"),
+        nl, write("inventaire.        -- pour afficher ce que vous portez"),
         nl, write("quitter.           -- pour quitter en sauvegardant la partie"),
         nl, write("terminer.          -- pour terminer la partie sans sauvegarder"),
         nl.
@@ -668,8 +667,8 @@ justification(0) :-
         nl.
 
 justification(1) :-
-        nl, write("Réponse b : En un jour et demi, une poule pond un œuf."),
-        nl, write("Donc en 30 jours, elle pondra 30/1,5 = 20 œufs."),
+        nl, write("Réponse b : En un jour et demi, une poule pond un oeuf."),
+        nl, write("Donc en 30 jours, elle pondra 30/1,5 = 20 oeufs."),
         nl.
 
 justification(2) :-
@@ -684,7 +683,7 @@ justification(3) :-
         nl, write("Réponse a : Si je suis le fils de cet homme car"),
         nl, write("le père de mon fils, c’est  moi, et"),
         nl, write("si le fils de cet homme, c’est moi, alors cet homme est mon père."),
-        nl
+        nl.
 
 justification(4) :-
         nl, write("Réponse d : Une personnes sur deux ne ment jamais et une sur deux ment toujours."),
@@ -733,25 +732,26 @@ justification(10) :-
 repondre(gourde) :-
         il_y_a(gourde, en_main), !,
         nl, write("Vous pouvez continuer en tapant la commande « s. » !"),
-        nl, essai(M), retract(essai(M)), assert(essai(0)), assert(correct(N)),
-        je_monte(N), O is N+1, !, retract(je_monte(N)), assert(je_monte(O)),
+        nl, essai(M), retract(essai(M)), assert(essai(0)),
+        je_monte(N), M is N-1, assert(correct(M)),
         retract(il_y_a(gourde, en_main)), je_possede(P), Q is P-1,
         retract(je_possede(P)), assert(je_possede(Q)), !.
 
 repondre(X) :-
-        je_monte(N), reponse(N, X), !,
+        je_monte(N), M is N-1, reponse(M, X), !,
         nl, write("Réponse correcte, vous pouvez continuer en tapant la commande « s. » !"),
-        nl, essai(M), M =< 1, retract(essai(M)), assert(essai(0)), assert(correct(N)),
-        O is N+1, !, retract(je_monte(N)), assert(je_monte(O)), !.
+        nl, write("Voici la justification à la question :"),
+        nl, justification(M), essai(P), P =< 1, retract(essai(P)), assert(essai(0)), assert(correct(M)),
+        !.
 
 repondre(_) :-
         essai(N), N < 1, !, M is N+1, retract(essai(N)), assert(essai(M)),
         nl, write("Réponse incorrecte... Plus qu’un essai !"), nl, !.
 
 repondre(_) :-
-        essai(N), N > 0,
+        essai(N), N > 0, je_monte(M), P is M-1,
         nl, write("C’est un échec ! Vous êtes condamné à mourir ! Ha ha ha ha."),
-        nl, terminer.
+        nl, write("Voici ce qu’il fallait répondre et pourquoi :"),
+        nl, justification(P), terminer.
 
 % Fin
-
