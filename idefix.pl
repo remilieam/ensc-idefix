@@ -60,8 +60,7 @@ afficher([T|Q]) :- write("  - "), write(T), nl, afficher(Q).
 
 inventaire :- findall(X, il_y_a(X, en_main), L),
         nl, write("Voici ce que je porte :"),
-        nl, afficher(L),
-        nl.
+        nl, afficher(L).
 
 /* Définition des directions */
 
@@ -78,11 +77,11 @@ d :- aller(d).
 
 m :- je_suis_a(escalierRdc),
         aller(m),
-        nl, write("Si vous voulez continuer, il faut répondre à la question posée pour le Sphinx."),
+        nl, write("Si vous voulez aller à l’étage, il faut répondre à la question posée pour le sphinx."),
         nl, write("Vous avez 2 essais pour répondre. En cas d’échec, c’est la mort assurée !"),
-        nl, write("Sauf si vous m’offrez une gourde de potion magique..."),
-        nl, write("Donc si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
-        nl, write("à ma question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
+        nl, write("Sauf si vous lui offrez une gourde de potion magique..."),
+        nl, write("Ainsi, si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
+        nl, write("à sa question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
         nl, je_monte(N), question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)),
         essai(P), retract(essai(P)), assert(essai(0)), !.
 
@@ -149,16 +148,16 @@ decrire(salle1) :-
         nl.
 
 decrire(salle2) :- 
-        nl, write("Vous êtes dans un salle dans laquelle sont posées au sol"),
-        nl, write("deux coffres fermés à clé. Il s’agirait donc de posséder une clé"),
-        nl, write("avant de revenir... La porte de sortie se trouve au sud."),
-        nl.
-
-decrire(salle2) :- 
         il_y_a(cle, en_main),
         nl, write("Vous êtes dans un salle dans laquelle sont posées au sol"),
         nl, write("deux coffres contenant des objets qui seront peut-être utiles !"),
         nl, write("La porte de sortie se trouve au sud."),
+        nl, !.
+
+decrire(salle2) :- 
+        nl, write("Vous êtes dans un salle dans laquelle sont posées au sol"),
+        nl, write("deux coffres fermés à clé. Il s’agirait donc de posséder une clé"),
+        nl, write("avant de revenir... La porte de sortie se trouve au sud."),
         nl.
 
 decrire(salle3) :- 
@@ -270,7 +269,7 @@ decrire(escalierEtage) :-
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
         nl, write("Il y a un(e) "), write(X), write(" ici."),
-        nl, fail.
+        fail.
 
 lister_objets(_).
 
@@ -279,7 +278,7 @@ lister_objets(_).
 lister_NPC(Endroit) :-
         est_present(X, Endroit),
         nl, write("Vous pouvez parler au / à la "), write(X), write(" ici."),
-        nl, fail.
+        fail.
 
 lister_NPC(_).
 
@@ -515,7 +514,7 @@ mourir :-
 /* Règle pour afficher un message final */
 
 terminer :-
-        nl, write("La partie est terminée. Tapez la commande « halt »."),
+        nl, write("La partie est terminée. Tapez la commande « halt. »."),
         nl, !.
 
 /* Règles pour quitter la partie en sauvegardant */
@@ -532,7 +531,9 @@ quitter :-
         listing(je_monte/1),
         listing(correct/1),
         listing(essai/1),
-        told.
+        told,
+        nl, write("La partie a bien été sauvée. Tapez la commande « halt. »."),
+        nl, !.
 
 /* Questions, réponses et justifications des énigmes du Sphinx */
 
@@ -541,9 +542,9 @@ quitter :-
 reponse(0, a).
 reponse(1, b).
 reponse(2, c).
-reponse(3, a).
-reponse(4, d).
-reponse(5, b).
+reponse(3, b).
+reponse(4, a).
+reponse(5, d).
 reponse(6, d).
 reponse(7, c).
 reponse(8, c).
@@ -581,26 +582,6 @@ question(2) :-
         nl.
 
 question(3) :-
-        nl, write("Le fils de cet homme est le père de mon fils."),
-        nl, write("Sachant que je ne suis pas une femme,"),
-        nl, write("quel est le lien de parenté entre cet homme et moi ?"),
-        nl, write("  a : Je suis le fils de cet homme"),
-        nl, write("  b : Je suis le père de cet homme"),
-        nl, write("  c : Je suis le petit-fils de cet homme"),
-        nl, write("  d : Je suis le cousin de cet homme"),
-        nl.
-
-question(4) :-
-        nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"),
-        nl, write("« Je ne mens jamais mais mon voisin de gauche ment toujours. »"),
-        nl, write("Combien y-a-t il de menteurs ?"),
-        nl, write("  a : 100"),
-        nl, write("  b : 99"),
-        nl, write("  c : 1"),
-        nl, write("  d : 50"),
-        nl.
-
-question(5) :-
         nl, write("Un homme s’arrête, sort de son camion et fait 20 pas vers l’ouest,"),
         nl, write("tue un ours avec trois balles de carabine, reprend sa route toujours"),
         nl, write("vers l’ouest et fais 30 pas. Il arrive à son camion."),
@@ -611,7 +592,17 @@ question(5) :-
         nl, write("  d : Roux"),
         nl.
 
-question(6) :-
+question(4) :-
+        nl, write("Le fils de cet homme est le père de mon fils."),
+        nl, write("Sachant que je ne suis pas une femme,"),
+        nl, write("quel est le lien de parenté entre cet homme et moi ?"),
+        nl, write("  a : Je suis la bru de cet homme"),
+        nl, write("  b : Je suis le fille de cet homme"),
+        nl, write("  c : Je suis le mère de cet homme"),
+        nl, write("  d : Je suis le soeur de cet homme"),
+        nl.
+
+question(5) :-
         nl, write("Dans l’aquarium, il y a 7 thons, 2 baleines, 6 poissons clown,"),
         nl, write("2 requins bleus, 2 dauphins, 4 maquereaux."),
         nl, write("Combien y a-t-il de poissons en tout ?"),
@@ -619,6 +610,16 @@ question(6) :-
         nl, write("  b : 17"),
         nl, write("  c : 21"),
         nl, write("  d : 19"),
+        nl.
+
+question(6) :-
+        nl, write("Sur une île de 100 habitants vivant le long d’un cercle, tous ont le même discours :"),
+        nl, write("« Je ne mens jamais mais mon voisin de gauche ment toujours. »"),
+        nl, write("Combien y-a-t il de menteurs ?"),
+        nl, write("  a : 100"),
+        nl, write("  b : 99"),
+        nl, write("  c : 1"),
+        nl, write("  d : 50"),
         nl.
 
 question(7) :-
@@ -681,29 +682,28 @@ justification(2) :-
         nl.
 
 justification(3) :-
-        nl, write("Réponse a : Si je suis le fils de cet homme car"),
-        nl, write("le père de mon fils, c’est  moi, et"),
-        nl, write("si le fils de cet homme, c’est moi, alors cet homme est mon père."),
-        nl.
-
-justification(4) :-
-        nl, write("Réponse d : Une personnes sur deux ne ment jamais et une sur deux ment toujours."),
-        nl, write("Un menteur ou une personne disant la vérité diront toujours qu’ils disent la vérité."),
-        nl, write("Un menteur dira de son voisin de gauche (qui dit la vérité) qu’il ment."),
-        nl, write("Une personne qui dit la vérité dira de son voisin de gauche (qui ment), qu’il ment."),
-        nl, write("Ainsi, il y a alternance entre personnes disant la vérité et menteurs,"),
-        nl, write("d’où le fait qu’il y a la moitié qui mentent."),
-        nl.
-
-justification(5) :-
         nl, write("Réponse b : L’homme avance toujours vers l’ouest et finit par retrouver son camion."),
         nl, write("C’est donc qu’il tourne en rond. Or, les seuls endroits au monde où avancer"),
         nl, write("vers l’ouest fait tourner en rond, ce sont les pôles. Et comme il n’y a pas d’ours"),
         nl, write("au pôle sud, il est forcément au pôle nord où les ours sont blancs."),
         nl.
 
-justification(6) :-
+justification(4) :-
+        nl, write("Réponse a : Si je suis la bru de cet homme car alors"),
+        nl, write("son fils, qui est mon mari, est bien le père de mon fils."),
+        nl.
+
+justification(5) :-
         nl, write("Réponse d : Car les baleines et les dauphins sont des mammifères et non des poissons."),
+        nl.
+
+justification(6) :-
+        nl, write("Réponse d : Une personnes sur deux ne ment jamais et une sur deux ment toujours."),
+        nl, write("Un menteur ou une personne disant la vérité diront toujours qu’ils disent la vérité."),
+        nl, write("Un menteur dira de son voisin de gauche (qui dit la vérité) qu’il ment."),
+        nl, write("Une personne qui dit la vérité dira de son voisin de gauche (qui ment), qu’il ment."),
+        nl, write("Ainsi, il y a alternance entre personnes disant la vérité et menteurs,"),
+        nl, write("d’où le fait qu’il y a la moitié qui mentent."),
         nl.
 
 justification(7) :-
@@ -728,7 +728,7 @@ justification(10) :-
         nl, write("et donc il est arrivé en haut du puits. (7 + 3 = 10.)"),
         nl.
 
-/* Règles pour répondre aux questions du Sphinx */
+/* Règles pour répondre aux questions du sphinx */
 
 repondre(gourde) :-
         il_y_a(gourde, en_main), !,
