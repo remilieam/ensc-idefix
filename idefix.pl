@@ -36,7 +36,7 @@ chemin(croisementEtage, o, couloirGaucheEtage).
 chemin(croisementEtage, n, escalierEtage).
 chemin(croisementEtage, s, balcon).
 
-chemin(couloirDroitEtage, n, salle6) :- il_y_a(carte_visiteur, en_main), avec(gardien).
+chemin(couloirDroitEtage, n, salle6) :- il_y_a(carte_visiteur, en_main).
 chemin(couloirDroitEtage, n, salle6) :- nl, write("Impossible ! Il faut la carte du visiteur !"), nl, fail.
 chemin(couloirDroitEtage, o, croisementEtage).
 
@@ -155,20 +155,20 @@ decrire(salle2) :-
         nl, !.
 
 decrire(salle2) :- 
-        nl, write("Vous êtes dans un salle dans laquelle sont posées au sol"),
+        nl, write("Vous êtes dans un salle dans laquelle sont posés au sol"),
         nl, write("deux coffres fermés à clé. Il s’agirait donc de posséder une clé"),
         nl, write("avant de revenir... La porte de sortie se trouve au sud."),
-        nl.
-
-decrire(salle3) :- 
-        nl, write("Vous avez trouvé l’accueil !"),
-        nl, write("Pour partir, prenez la porte qui se trouve au nord."),
         nl.
 
 decrire(salle3) :- 
         il_y_a(laissez-passer_R-24, en_main),
         nl, write("Vous êtes à l’accueil !"),
         nl, write("Vous pouvez faire signer ici le laissez-passer R-24."),
+        nl, write("Pour partir, prenez la porte qui se trouve au nord."),
+        nl.
+
+decrire(salle3) :- 
+        nl, write("Vous avez trouvé l’accueil !"),
         nl, write("Pour partir, prenez la porte qui se trouve au nord."),
         nl.
 
@@ -194,8 +194,24 @@ decrire(croisementEtage) :-
         nl.
 
 decrire(couloirDroitEtage) :-
+        il_y_a(carte_visiteur, en_main),
+        avec(gardien),
         nl, write("Vous êtes au niveau du couloir droit du premier étage."),
-        nl, write("Au nord se trouve la bibliothèque dont l’accès semble réservé au personnel."),
+        nl, write("Au nord se trouve la bibliothèque."),
+        nl, write("À l’ouest se trouve le croisement des couloirs du premier étage."),
+        nl, !.
+
+decrire(couloirDroitEtage) :-
+        il_y_a(carte_visiteur, en_main),
+        nl, write("Vous êtes au niveau du couloir droit du premier étage."),
+        nl, write("Au nord se trouve la bibliothèque dont l’accès semble protégé par une alarme."),
+        nl, write("Mieux vaudrait être accompagné avant de revenir."),
+        nl, write("À l’ouest se trouve le croisement des couloirs du premier étage."),
+        nl, !.
+
+decrire(couloirDroitEtage) :-
+        nl, write("Vous êtes au niveau du couloir droit du premier étage."),
+        nl, write("Au nord se trouve la bibliothèque."),
         nl, write("À l’ouest se trouve le croisement des couloirs du premier étage."),
         nl, !.
         
@@ -234,14 +250,21 @@ decrire(salle7) :-
         il_y_a(torche, en_main),
         est_present(gardien, salle7),
         nl, write("Vous vous trouvez dans la loge du gardien."),
-        nl, write("Et si je lui offrait la torche que j’ai en main."),
+        nl, write("Il semble perplexe de votre arrivée."),
+        nl, !.
+
+decrire(salle7) :-
+        il_y_a(laissez-passer_W-51, en_main),
+        est_present(gardien, salle7),
+        nl, write("Vous vous trouvez dans la loge du gardien."),
+        nl, write("Il semble content de vous voir arriver."),
         nl, !.
 
 decrire(salle7) :-
         est_present(gardien, salle7),
         nl, write("Vous vous trouvez dans la loge du gardien."), 
         nl, write("Il semblerait qu’il ne soit pas commode,"),
-        nl, write("mieux voudrait, revenir lorsque j’aurai quelque chose"), 
+        nl, write("mieux voudrait, revenir lorsque vous aurez quelque chose"), 
         nl, write("à lui offrir... Peut-être une torche... ?"),
         nl, !.
 
@@ -414,8 +437,8 @@ parler :-
         il_y_a(laissez-passer_W-51, en_main), !,
         assert(avec(gardien)),
         retractall(est_present(gardien, salle7)),
-        nl, write("Bonjour ! Je vais rester avec vous"),
-        nl, write("pour pouvoir vous ouvrir la porte de la bibliothèque."),
+        nl, write("Bonjour ! Je vais rester avec vous pour pouvoir"),
+        nl, write("désactiver l’alarme de la porte de la bibliothèque."),
         nl, !.
 
 parler :-
