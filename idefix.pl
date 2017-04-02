@@ -77,13 +77,14 @@ d :- aller(d).
 
 m :- je_suis_a(escalierRdc),
         aller(m),
+        je_monte(N), N =< 10, question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)),
+        essai(P), retract(essai(P)), assert(essai(0)),
         nl, write("Si vous voulez aller à l’étage, il faut répondre à la question posée pour le sphinx."),
         nl, write("Vous avez 2 essais pour répondre. En cas d’échec, c’est la mort assurée !"),
         nl, write("Sauf si vous lui offrez une gourde de potion magique..."),
         nl, write("Ainsi, si vous l’avez dans votre inventaire et que vous ne pouvez pas répondre"),
         nl, write("à sa question, tapez la commande « repondre(gourde). ». (Petit joueur.)"),
-        nl, je_monte(N), question(N), M is N+1, retract(je_monte(N)), assert(je_monte(M)),
-        essai(P), retract(essai(P)), assert(essai(0)), !.
+        nl, !.
 
 m :- aller(m).
 
@@ -754,12 +755,13 @@ justification(10) :-
 /* Règles pour répondre aux questions du sphinx */
 
 repondre(gourde) :-
-        il_y_a(gourde, en_main), !,
-        nl, write("Vous pouvez continuer en tapant la commande « s. » !"),
-        nl, essai(M), retract(essai(M)), assert(essai(0)),
+        il_y_a(gourde, en_main),
+        essai(R), retract(essai(R)), assert(essai(0)),
         je_monte(N), M is N-1, assert(correct(M)),
         retract(il_y_a(gourde, en_main)), je_possede(P), Q is P-1,
-        retract(je_possede(P)), assert(je_possede(Q)), !.
+        retract(je_possede(P)), assert(je_possede(Q)),
+        nl, write("Vous pouvez continuer en tapant la commande « s. » !"),
+        nl, !.
 
 repondre(X) :-
         je_monte(N), M is N-1, reponse(M, X), !,
